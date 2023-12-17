@@ -2,7 +2,12 @@
 - hosts: all
   become: true
   roles:
-    - proxy
+    - nginx-proxy
+
+- hosts: all
+  become: true
+  roles:
+    - certbot
 
 - hosts: all
   become: true
