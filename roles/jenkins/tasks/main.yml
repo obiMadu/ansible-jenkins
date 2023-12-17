@@ -1,0 +1,36 @@
+- name: Install JDK
+  ansible.builtin.apt:
+    pkg:
+      - fontconfig
+      - openjdk-17-jre
+
+- name: Get Jenkins Repo Key
+  ansible.builtin.get_url:
+    url: https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+    dest: /usr/share/keyrings/jenkins-keyring.asc
+
+- name: Set Jenkins Source
+  ansible.builtin.lineinfile:
+    path: /etc/apt/sources.list.d/jenkins.list
+    line: deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/
+    create: yes
+
+- name: Install Jenkins
+  ansible.builtin.apt:
+    name: jenkins
+    state: present
+    update_cache: true
+
+- name: Enable Jenkins
+  ansible.builtin.service:
+    name: jenkins
+    enabled: true
+
+- name: Check Jenkins Status
+  ansible.builtin.shell:
+    cmd: systemctl status jenkins
+  register: check_jens
+
+- name: Debug
+  debug:
+    msg: "{{ check_jens.stdout_lines }}"
