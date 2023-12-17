@@ -1,0 +1,27 @@
+- name: Install NginX
+  tags: nginx,install
+  ansible.builtin.apt:
+    name: nginx
+    state: latest
+    update_cache: true
+
+- name: Enable NginX
+  ansible.builtin.service:
+    name: nginx
+    enabled: true
+
+- name: Config Jenkins Proxy
+  ansible.builtin.template:
+    src: "jenkins-proxy.j2"
+    dest: /etc/nginx/sites-available/jenkins-proxy.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart_nginx
+
+- name: Enable Proxy
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/jenkins-proxy.conf 
+    dest: /etc/nginx/sites-enabled/jenkins-proxy.conf
+    state: link
+  notify: restart_nginx
