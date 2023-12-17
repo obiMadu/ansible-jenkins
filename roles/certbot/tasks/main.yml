@@ -1,0 +1,20 @@
+- name: Install Snapd
+  ansible.builtin.apt:
+    name: snapd
+    state: latest
+
+- name: Install Certbot
+  community.general.snap:
+    name: certbot
+    classic: true
+    state: present
+
+- name: Create symlink    
+  ansible.builtin.file:
+    src: /snap/bin/certbot 
+    dest: /usr/bin/certbot
+    state: link
+
+- name: Run certbot
+  ansible.builtin.shell: 
+    cmd: certbot --nginx -n --agree-tos --email {{ server_email }} --domains {{ server_name }}
